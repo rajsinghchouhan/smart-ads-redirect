@@ -65,11 +65,6 @@ async function checkPrimary() {
 export default {
   async scheduled(controller, env, ctx) {
     const now = Date.now();
-
-if (!env.HEALTH) {
-  console.log("HEALTH KV binding missing");
-  return;
-}
     
     const status =
       await env.HEALTH.get("destination");
