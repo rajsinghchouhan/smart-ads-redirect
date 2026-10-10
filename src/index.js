@@ -1,4 +1,4 @@
-const PRIMARY_URL = "https://massage-infos.github.io/go";
+const PRIMARY_URL = "https://facebook.com";
 const BACKUP_URL = "https://google.com";
 
 const NORMAL_INTERVAL = 1 * 60 * 1000;
