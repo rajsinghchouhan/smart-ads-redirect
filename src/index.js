@@ -1,6 +1,7 @@
 const PRIMARY_URL = "https://massage-infos.github.io/go";
 const BACKUP_URL = "https://suraj.com";
 
+const NORMAL_INTERVAL = 5 * 60 * 1000;
 const BACKUP_INTERVAL = 2 * 60 * 60 * 1000;
 const TIMEOUT_MS = 10000;
 
@@ -45,13 +46,14 @@ async function checkPrimary() {
           .toLowerCase()
       : "";
 
-    console.log("Primary title:", title);
-
-    return !(
+    const notFound =
       title.includes("Site not found") ||
       title.includes("GitHub Pages") ||
-      title.includes("404")
-    );
+      title.includes("404");
+
+    console.log("Primary title:", title);
+
+    return !notFound;
   } catch (error) {
     console.log("Primary check failed:", String(error));
     return false;
@@ -63,41 +65,49 @@ async function checkPrimary() {
 export default {
   async scheduled(controller, env, ctx) {
     const now = Date.now();
-    const status = await env.HEALTH.get("destination");
+
+    const status =
+      await env.HEALTH.get("destination");
+
     const lastCheck = Number(
       await env.HEALTH.get("last_check") || 0
     );
 
-    // While in backup mode, wait 2 hours between checks.
+    // In backup mode, check primary only every 2 hours.
     if (
       status === "backup" &&
       now - lastCheck < BACKUP_INTERVAL
     ) {
-      console.log("BACKUP active; next check not due.");
+      console.log("Backup mode: check not due yet.");
       return;
     }
 
-    // Save the time of this health check.
-    await env.HEALTH.put("last_check", String(now));
+    // Normal mode checks on each 5-minute cron run.
+    await env.HEALTH.put(
+      "last_check",
+      String(now)
+    );
 
     const isWorking = await checkPrimary();
+
     const newStatus = isWorking ? "primary" : "backup";
 
-    await env.HEALTH.put("destination", newStatus);
+    await env.HEALTH.put(
+      "destination",
+      newStatus
+    );
 
-    console.log("Destination status:", newStatus);
+    console.log("New destination status:", newStatus);
   },
 
   async fetch(request, env) {
-    const status = await env.HEALTH.get("destination");
+    const status =
+      await env.HEALTH.get("destination");
 
-    // Never check the primary URL during a visitor request.
+    // Before the first health check, use backup safely.
     const destination =
       status === "primary" ? PRIMARY_URL : BACKUP_URL;
 
     return Response.redirect(destination, 302);
   }
 };
-
-
-
