@@ -65,7 +65,7 @@ async function checkPrimary() {
 export default {
   async scheduled(controller, env, ctx) {
     const now = Date.now();
-    
+
     const status =
       await env.HEALTH.get("destination");
 
@@ -101,12 +101,8 @@ export default {
   },
 
   async fetch(request, env) {
-  if (!env.HEALTH) {
-    return Response.redirect(PRIMARY_URL, 302);
-  }
-
-  const status =
-    await env.HEALTH.get("destination");
+    const status =
+      await env.HEALTH.get("destination");
 
     // Before the first health check, use backup safely.
     const destination =
