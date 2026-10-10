@@ -1,8 +1,8 @@
 const PRIMARY_URL = "https://massage-infos.github.io/go";
 const BACKUP_URL = "https://google.com";
 
-const NORMAL_INTERVAL = 5 * 60 * 1000;
-const BACKUP_INTERVAL = 2 * 60 * 60 * 1000;
+const NORMAL_INTERVAL = 1 * 60 * 1000;
+const BACKUP_INTERVAL = 2 * 60 * 1000;
 const TIMEOUT_MS = 10000;
 
 async function checkPrimary() {
