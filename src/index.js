@@ -1,4 +1,4 @@
-const PRIMARY_URL = "https://abc.com";
+const PRIMARY_URL = "https://massage-infos.github.io/go";
 const BACKUP_URL = "https://suraj.com";
 const TIMEOUT_MS = 2500;
 
@@ -38,8 +38,8 @@ async function checkPrimary() {
       : "";
 
     const notFound =
-      title.includes("not found") ||
-      title.includes("page not found");
+      title.includes("Site not found") ||
+      title.includes("GitHub Pages");
 
     return !notFound;
   } catch {
